@@ -1,0 +1,45 @@
+{
+  "name": "midi-synth-example",
+  "version": "1.0.0-alpha.0",
+  "scripts": {
+    "bundle": "NODE_ENV=development watchify -vd -p browserify-hmr ./src/js/index.js -o ./build/client/js/bundle.js & echo \"$!\" > build/bundle.pid",
+    "jade2html": "jade < ./src/jade/index.jade > ./build/client/index.html",
+    "open-browser": "./build/open-url $npm_package_config_url",
+    "serve": "http-server ./build/client -c 1 -i -a localhost & echo \"$!\" > build/serve.pid",
+    "serve-bundle": "npm run jade2html && npm run bundle && npm run serve && npm run open-browser",
+    "test": "mocha -R ./mocha-globals",
+    "unserve-bundle": "for f in ./build/*.pid; do kill $(<$f); done"
+  },
+  "browserify": {
+    "transform": [
+      "babelify"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jameswomack/midi-synth-example.git"
+  },
+  "config": {
+    "url": "http://localhost:8080/"
+  },
+  "description": "Modern Babel + Web MIDI",
+  "main": "index.js",
+  "author": "James J. Womack (@james_womack)",
+  "license": "ISC",
+  "dependencies": {
+    "lodash.partial": "3.1.1",
+    "domready": "1.0.8",
+    "midi-synth": "0.0.4"
+  },
+  "devDependencies": {
+    "babel-preset-stage-1": "6.1.2",
+    "babelify": "7.2.0",
+    "browserify": "11.2.0",
+    "browserify-hmr": "0.3.1",
+    "http-server": "0.8.5",
+    "jade": "1.11.0",
+    "jadeify": "4.4.0",
+    "modcss": "1.3.0",
+    "watchify": "3.6.0"
+  }
+}

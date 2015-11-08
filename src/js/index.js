@@ -1,25 +1,31 @@
-const $       = require('domready')
-const partial = require('lodash.partial')
-const Synth   = require('midi-synth')
+const partial  = require('lodash.partial')
+const domready = require('domready')
 
-const s = new Synth({
-  // print info messages
-  debug         : true,
-
-  bindToInputs  : false
-})
-
-const listen = (emitter, type, handler, mapper) =>
-  emitter.addEventListener(type, e => handler(mapper(e)))
-
-const mapk = (k)    => (e) => e[k]
-const bynd = (o, k) => o[k].bind(o)
+const synth = require('./synth')
+const { listen, foo } = require('./dom')
+const { mapk, bynd } = require('./fn')
 
 const mapKeyCode = mapk('keyCode')
 const _          = partial.placeholder
 
-$(() => {
-  const listenk = partial(listen, document.body, _, _, mapKeyCode)
-  listenk('keydown', bynd(s, 'noteOn'))
-  listenk('keyup',   bynd(s, 'noteOff'))
-})
+let listenk
+let keydownListener
+let keyupListener
+
+const onDomready = () => {
+  document.write(foo)
+  listenk = partial(listen, document.body, _, _, mapKeyCode)
+  keydownListener = listenk('keydown', bynd(synth, 'noteOn'))
+  keyupListener   = listenk('keyup',   bynd(synth, 'noteOff'))
+}
+
+domready(onDomready)
+
+if (module.hot) {
+  module.hot.accept()
+  module.hot.dispose(() => {
+    keydownListener()
+    keyupListener()
+    onDomready()
+  })
+}

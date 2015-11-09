@@ -7,7 +7,8 @@
     "loadEagerly": [
       "./node_modules/midi-synth/*.js",
       "./node_modules/lodash.partial/index.js",
-      "./lib/*.js"
+      "./src/*.js",
+      "./src/**/*.js"
     ],
     "plugins": {
       "node": {}
